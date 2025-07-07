@@ -2,6 +2,7 @@ import axios from 'axios'
 import type { BaseRequestConfig, BaseResponseConfig } from '@/types/http'
 import { message } from '@/utils/fn'
 import { useAppStore } from '@/store/useAppStore'
+import { useUserStore } from '@/store/useUserStore'
 declare module 'axios' {
     interface AxiosInstance {
         <T = any, R = BaseResponseConfig<T>, D = any>(config: AxiosRequestConfig<D>): Promise<R>
@@ -14,12 +15,11 @@ const instance = axios.create({
     timeout: 10000
 })
 
-// 请求拦截器
 instance.interceptors.request.use(
     config => {
         const app = useAppStore()
         app.setAction(apiPrefix + (config.url ?? ''))
-        const token = localStorage.getItem('token')
+        const token = localStorage.getItem('access_token')
         if (token) {
             config.headers['Authorization'] = `Bearer ${token}`
         }
@@ -30,13 +30,12 @@ instance.interceptors.request.use(
     }
 )
 
-// 响应拦截器
 instance.interceptors.response.use(
     response => {
         if (response.data.code === 0) {
             return Promise.resolve(response.data)
         } else if (response.data && response.data.code === 401) {
-            localStorage.removeItem('token')
+            useUserStore().logout()
             window.location.href = '/login'
             return Promise.reject(response.data)
         }
@@ -44,7 +43,7 @@ instance.interceptors.response.use(
     },
     error => {
         if (error.response && error.response.status === 401) {
-            localStorage.removeItem('token')
+            useUserStore().logout()
             window.location.href = '/login'
         }
         return Promise.reject(error)

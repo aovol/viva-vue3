@@ -1,11 +1,26 @@
 import { defineStore } from 'pinia'
 import useHttp from '@/utils/useHttp'
 import type { UserInfo, LoginData, LoginResponse } from '@/types/user'
+
+interface tokenObj {
+    access_token: string
+    expires_at?: string
+    refresh_token?: string
+    scope?: string
+    token_type?: string
+}
+interface UserState {
+    token: tokenObj | null
+    user: UserInfo | null
+}
+
 export const useUserStore = defineStore('userStore', {
-    state: () => {
-        const token = localStorage.getItem('token')
+    state: (): UserState => {
+        const token = localStorage.getItem('access_token')
         return {
-            token: token || null,
+            token: {
+                access_token: token || ''
+            },
             user: null as UserInfo | null
         }
     },
@@ -13,11 +28,11 @@ export const useUserStore = defineStore('userStore', {
         isAuthenticated: state => !!state.user && !!state.token
     },
     actions: {
-        async login(params: LoginData) {
+        async login(data: LoginData) {
             const res = await useHttp<LoginResponse>({
-                url: '/auth/login',
+                url: '/login',
                 method: 'post',
-                data: params
+                data
             })
 
             this.setLoginData(res.data)
@@ -27,7 +42,7 @@ export const useUserStore = defineStore('userStore', {
         async getUser() {
             try {
                 const res = await useHttp<UserInfo>({
-                    url: '/auth/user',
+                    url: '/user',
                     method: 'get'
                 })
                 this.user = res.data
@@ -41,7 +56,7 @@ export const useUserStore = defineStore('userStore', {
         async logout() {
             try {
                 await useHttp({
-                    url: '/auth/logout',
+                    url: '/logout',
                     method: 'post'
                 })
             } catch (error: any) {
@@ -52,12 +67,14 @@ export const useUserStore = defineStore('userStore', {
         },
 
         setLoginData(data: LoginResponse) {
-            localStorage.setItem('token', data.token)
-            this.token = data.token
+            localStorage.setItem('access_token', data.access_token)
+            this.token = {
+                access_token: data.access_token
+            }
         },
 
         removeLoginData() {
-            localStorage.removeItem('token')
+            localStorage.removeItem('access_token')
             this.token = null
             this.user = null
         }

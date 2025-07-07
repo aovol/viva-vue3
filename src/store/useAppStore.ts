@@ -15,14 +15,12 @@ export const useAppStore = defineStore('appStore', {
             this.reqLoading = loading
         },
         setAction(action: string) {
-            // 如果action已经存在，则不添加
             if (this.actions.includes(action)) {
                 return
             }
             this.actions.push(action)
         },
         removeAction(action: string) {
-            // 如果action不存在，则不删除
             if (!this.actions.includes(action)) {
                 return
             }
