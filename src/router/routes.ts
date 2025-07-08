@@ -1,28 +1,34 @@
-import type { RouteRecordRaw } from 'vue-router';
-import Layout from '@/components/layouts/Layout.vue';
+import type { RouteRecordRaw } from 'vue-router'
+import Layout from '@/components/layouts/Layout.vue'
 const routes: RouteRecordRaw[] = [
-  {
-    path: '/',
-    name: 'root',
-    redirect: '/dashboard',
-    component: Layout,
-    children: [
-      {
-        path: 'dashboard',
-        name: 'dashboard',
+    {
+        path: '/',
+        name: 'root',
+        redirect: '/dashboard/index',
+        component: Layout,
         children: [
-          {
-            path: '',
-            name: 'dashboard-index',
-            component: () => import('@/views/dashboard/index.vue'),
-          },
-        ],
-      },
-    ],
-  },
-  {
-    path: '/login',
-    component: () => import('@/views/login/index.vue'),
-  },
-];
-export default routes;
+            {
+                path: '/dashboard',
+                name: 'dashboard',
+                children: [
+                    {
+                        path: 'index',
+                        name: 'dashboard-index',
+                        component: () => import('@/views/dashboard/index.vue')
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        path: '/login',
+        component: () => import('@/views/login/index.vue')
+    },
+    {
+        // hide: true,
+        path: '/:pathMatch(.*)*',
+        component: () => import('../views/error/404.vue')
+    }
+]
+
+export default routes

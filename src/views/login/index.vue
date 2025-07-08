@@ -60,8 +60,8 @@
     const userStore = useUserStore()
     const appStore = useAppStore()
     const formData = reactive<LoginData>({
-        username: '',
-        password: ''
+        username: 'admin',
+        password: '123456'
     })
     const onReset: FormProps['onReset'] = () => {
         MessagePlugin.success('重置成功')

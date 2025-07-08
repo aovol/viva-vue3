@@ -9,8 +9,9 @@
             <div class="flex-1 flex flex-col overflow-hidden">
                 <div
                     class="page-head flex items-center justify-between bg-white h-12 p-4 border-b border-gray-100"
+                    v-if="showPageHead"
                 >
-                    <div class="text-base font-bold">控制台</div>
+                    <div class="text-base font-bold">{{ route.meta.data?.name }}</div>
                 </div>
                 <div
                     class="relative overflow-auto overflow-x-hidden main-content p-4"
@@ -24,6 +25,12 @@
 </template>
 
 <script setup lang="ts">
+    import { computed } from 'vue'
     import Aside from './Aside.vue'
     import Header from './Header.vue'
+    import { useRoute } from 'vue-router'
+    const route = useRoute()
+    const showPageHead = computed(() => {
+        return route.meta.data?.show_page_head || false
+    })
 </script>

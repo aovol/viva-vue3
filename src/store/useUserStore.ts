@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import useHttp from '@/utils/useHttp'
 import type { UserInfo, LoginData, LoginResponse } from '@/types/user'
+import { useMenuStore } from './useMenuStore'
 
 interface tokenObj {
     access_token: string
@@ -46,6 +47,8 @@ export const useUserStore = defineStore('userStore', {
                     method: 'get'
                 })
                 this.user = res.data
+                const menuStore = useMenuStore()
+                await menuStore.getMenus()
                 return true
             } catch (error) {
                 this.user = null
