@@ -64,6 +64,12 @@
             )
         },
         {
+            colKey: 'slug',
+            title: '标识',
+            width: 200,
+            cell: (_, { row }) => <t-link>{row.slug}</t-link>
+        },
+        {
             colKey: 'path',
             title: '路由',
             width: 200,

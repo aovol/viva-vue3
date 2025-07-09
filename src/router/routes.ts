@@ -6,19 +6,7 @@ const routes: RouteRecordRaw[] = [
         name: 'root',
         redirect: '/dashboard/index',
         component: Layout,
-        children: [
-            {
-                path: '/dashboard',
-                name: 'dashboard',
-                children: [
-                    {
-                        path: 'index',
-                        name: 'dashboard-index',
-                        component: () => import('@/views/dashboard/index.vue')
-                    }
-                ]
-            }
-        ]
+        children: []
     },
     {
         path: '/login',

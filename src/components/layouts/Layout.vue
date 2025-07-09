@@ -11,7 +11,7 @@
                     class="page-head flex items-center justify-between bg-white h-12 p-4 border-b border-gray-100"
                     v-if="showPageHead"
                 >
-                    <div class="text-base font-bold">{{ route.meta.data?.name }}</div>
+                    <div class="font-bold">{{ route.meta.data?.name }}</div>
                 </div>
                 <div
                     class="relative overflow-auto overflow-x-hidden main-content p-4"

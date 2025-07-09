@@ -6,6 +6,7 @@ import TDesign from 'tdesign-vue-next'
 // import 'tdesign-vue-next/es/style/index.css'
 import '@/assets/css/td-q.css'
 import '@/assets/css/tw.css'
+import '@/assets/style.less'
 import router from '@/router'
 
 const app = createApp(App)

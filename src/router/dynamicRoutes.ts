@@ -36,11 +36,12 @@ const generateRoutes = (menus: any[], parentPath = ''): RouteRecordRaw[] => {
         if (!menu.path) {
             console.log('menu', menu)
         }
-        const path = menu.path.startsWith('/')
-            ? menu.path
-            : parentPath
-            ? `${parentPath}/${menu.path}`
-            : `/${menu.path}`
+        const path =
+            menu.path && menu.path.startsWith('/')
+                ? menu.path
+                : parentPath
+                ? `${parentPath}/${menu.path}`
+                : `/${menu.path}`
 
         let name = `route-${menu.slug || path}`
         if (menu.path === '/') {
