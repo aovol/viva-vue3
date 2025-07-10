@@ -37,6 +37,7 @@
     import MenuForm from './MenuForm.vue'
     import type { Menu } from '@/types/menu'
     import { nextTick } from 'vue'
+    import useHttp from '@/utils/useHttp'
     const menuStore = useMenuStore()
     const expandAll = ref(true)
     const tableRef = ref<EnhancedTableInstanceFunctions | null>(null)
@@ -113,12 +114,15 @@
     }
     // 删除
     const onDeleteConfirm = (row: Menu) => {
-        // 移除当前节点及其所有子节点
-        tableRef.value?.remove(row.id)
-
-        // 仅移除所有子节点
-        // tableRef.value.removeChildren(row.key);
-        MessagePlugin.success('删除成功')
+        useHttp({
+            url: '/system/menu/delete',
+            method: 'post',
+            data: {
+                menuId: row.id
+            }
+        }).then(() => {
+            menuStore.getMenus()
+        })
     }
 
     const treeExpandAndFoldIconRender: EnhancedTableProps['treeExpandAndFoldIcon'] = (

@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts" setup>
-    import { ref } from 'vue'
+    import { ref, watch } from 'vue'
     import type { MenuProps } from 'tdesign-vue-next'
     import { useMenuStore } from '@/store/useMenuStore'
     import MenuItem from './MenuItem.vue'
@@ -25,9 +25,18 @@
     const router = useRouter()
     const route = useRoute()
     const expandedKeys = ref<MenuProps['expanded']>([])
-    const parentPath = route.matched[route.matched.length - 2]?.path
-
-    expandedKeys.value = [parentPath]
+    watch(
+        () => route.path,
+        () => {
+            const parentPath = route.matched[route.matched.length - 2]?.path
+            if (parentPath) {
+                expandedKeys.value = [parentPath]
+            }
+        },
+        {
+            immediate: true
+        }
+    )
 
     const menuStore = useMenuStore()
     const collapsed = ref(false)

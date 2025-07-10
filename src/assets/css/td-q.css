@@ -653,6 +653,9 @@
 }
 
 .t-default-menu .t-submenu.t-is-opened {
+    /* background-color: var(--td-bg-color-secondarycontainer); */
+}
+.t-default-menu .t-submenu.is-active {
     background-color: var(--td-bg-color-secondarycontainer);
 }
 

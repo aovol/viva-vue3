@@ -1,5 +1,9 @@
 <template>
-    <t-submenu :value="menu.path" v-if="menu.children && menu.children.length > 0">
+    <t-submenu
+        :class="pKeys.includes(menu.path) ? 'is-active' : ''"
+        :value="menu.path"
+        v-if="menu.children && menu.children.length > 0"
+    >
         <template #icon>
             <t-icon name="control-platform" />
         </template>
@@ -15,7 +19,24 @@
 <script lang="ts" setup>
     import type { Menu } from '@/types/menu'
     import MenuItem from './MenuItem.vue'
+    import { useRoute } from 'vue-router'
+    const route = useRoute()
+    import { ref, watch } from 'vue'
     defineProps<{
         menu: Menu
     }>()
+
+    const pKeys = ref<string[]>([])
+    watch(
+        () => route.path,
+        () => {
+            const parentPath = route.matched[route.matched.length - 2]?.path
+            if (parentPath) {
+                pKeys.value = [parentPath]
+            }
+        },
+        {
+            immediate: true
+        }
+    )
 </script>
