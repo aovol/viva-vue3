@@ -2,9 +2,9 @@
 import { AxiosResponse } from 'axios'
 export interface PaginationResponse<T> {
     items: T[]
-    total: number
-    current_page: number
-    page_size: number
+    total?: number
+    current_page?: number
+    page_size?: number
 }
 
 //axios请求参数
