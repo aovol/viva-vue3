@@ -165,6 +165,7 @@
     }
 
     const show = (menu?: Menu) => {
+        console.log('menu', menu)
         if (menu) {
             menuForm.id = menu.id
             menuForm.parent_id = menu.parent_id
@@ -185,7 +186,7 @@
     })
 
     const onSubmit: FormProps['onSubmit'] = ({ validateResult }) => {
-        if (!validateResult) return
+        if (!(validateResult === true)) return
         const url = menuForm.id ? '/system/menu/update' : '/system/menu/create'
         useHttp({
             url,

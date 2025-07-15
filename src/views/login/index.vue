@@ -66,13 +66,9 @@
     const onReset: FormProps['onReset'] = () => {
         MessagePlugin.success('重置成功')
     }
-    const onSubmit: FormProps['onSubmit'] = async ({ validateResult, firstError }) => {
-        if (validateResult === true) {
-            await userStore.login(formData)
-            router.push('/')
-        } else {
-            console.log('Validate Errors: ', firstError, validateResult)
-            MessagePlugin.warning(firstError ?? '')
-        }
+    const onSubmit: FormProps['onSubmit'] = async ({ validateResult }) => {
+        if (!(validateResult === true)) return
+        await userStore.login(formData)
+        router.push('/')
     }
 </script>

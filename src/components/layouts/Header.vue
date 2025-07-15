@@ -1,9 +1,9 @@
 <template>
-    <div class="header border-b border-gray-100 bg-white">
+    <div class="header border-b border-secondary-light bg-white">
         <t-head-menu v-model="menu1Value" theme="light" @change="changeHandler">
-            <t-menu-item value="item1"> 菜单1 </t-menu-item>
+            <!-- <t-menu-item value="item1"> 菜单1 </t-menu-item>
             <t-menu-item value="item2"> 菜单2 </t-menu-item>
-            <t-menu-item value="item4" :disabled="true"> 禁用菜单 </t-menu-item>
+            <t-menu-item value="item4" :disabled="true"> 禁用菜单 </t-menu-item> -->
             <template #operations>
                 <div class="flex items-center gap-4">
                     <t-button variant="text" shape="square">

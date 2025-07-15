@@ -36,7 +36,7 @@ instance.interceptors.response.use(
             return Promise.resolve(response.data)
         } else if (response.data && response.data.code === 401) {
             useUserStore().logout()
-            window.location.href = '/login'
+            // window.location.href = '/login'
             return Promise.reject(response.data)
         }
         return Promise.reject(response.data)
@@ -44,7 +44,7 @@ instance.interceptors.response.use(
     error => {
         if (error.response && error.response.status === 401) {
             useUserStore().logout()
-            window.location.href = '/login'
+            // window.location.href = '/login'
         }
         return Promise.reject(error)
     }

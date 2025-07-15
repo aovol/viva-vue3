@@ -8,6 +8,7 @@
         </div>
         <div class="p-4 bg-white">
             <t-enhanced-table
+                disable-data-page
                 ref="tableRef"
                 row-key="id"
                 drag-sort="row-handler"

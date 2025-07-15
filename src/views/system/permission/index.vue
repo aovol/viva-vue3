@@ -1,6 +1,6 @@
 <template>
     <t-space direction="vertical">
-        <t-button @click="roleFormRef?.show()">添加角色</t-button>
+        <t-button @click="permissionFormRef?.show()">添加权限</t-button>
         <div class="bg-white p-4">
             <div class="border-b-2 gap-3 border-secondary-light flex items-center">
                 <div class="text-sm text-secondary pb-2">角色类型</div>
@@ -31,13 +31,13 @@
                 disable-data-page
                 hover
                 row-key="index"
-                :data="roles.items"
+                :data="permissions.items"
                 :columns="columns"
                 stripe
                 :pagination="{
                     defaultCurrent: 1,
                     defaultPageSize: 5,
-                    total: roles.total
+                    total: permissions.total
                 }"
                 cell-empty-content="-"
                 lazy-load
@@ -45,7 +45,12 @@
             </t-table>
         </div>
 
-        <RoleForm ref="roleFormRef" @success="getRoles" />
+        <PermissionForm
+            ref="permissionFormRef"
+            @success="getPermissions"
+            :controllers="controllers"
+            :groups="groups"
+        />
     </t-space>
 </template>
 
@@ -53,17 +58,18 @@
     import { reactive, ref, onMounted } from 'vue'
     import type { TableProps } from 'tdesign-vue-next'
 
-    import RoleForm from './RoleForm.vue'
+    import PermissionForm from './PermissionForm.vue'
     import useHttp from '@/utils/useHttp'
     import type { PaginationResponse } from '@/types/http'
-    import type { Role } from '@/types/role-permission'
+    import type { Controller, Permission, PermissionGroup } from '@/types/role-permission'
     import { identity, pickBy } from 'lodash-es'
     const params = reactive({
         guard: 'admin'
     })
-    const roleFormRef = ref<InstanceType<typeof RoleForm>>()
-
-    const roles = reactive<PaginationResponse<Role>>({
+    const permissionFormRef = ref<InstanceType<typeof PermissionForm>>()
+    const controllers = ref<Controller[]>([])
+    const groups = ref<PermissionGroup[]>([])
+    const permissions = reactive<PaginationResponse<Permission>>({
         items: [],
         total: 0
     })
@@ -93,14 +99,14 @@
                         <t-button
                             theme="primary"
                             size="small"
-                            onClick={() => roleFormRef.value?.show(row as Role)}
+                            onClick={() => permissionFormRef.value?.show(row as Permission)}
                         >
                             编辑
                         </t-button>
                         <t-popconfirm
                             v-model:visible={row.visible}
                             content="确认删除吗"
-                            onConfirm={() => onDeleteConfirm(row as Role)}
+                            onConfirm={() => onDeleteConfirm(row as Permission)}
                             onVisibleChange={() => {
                                 row.visible = true
                             }}
@@ -120,7 +126,7 @@
         }
     ])
 
-    const onDeleteConfirm = (row: Role) => {
+    const onDeleteConfirm = (row: Permission) => {
         row.loading = true
         useHttp({
             url: '/system/role/delete',
@@ -131,25 +137,44 @@
         })
             .then(_ => {
                 row.visible = false
-                getRoles()
+                getPermissions()
             })
             .finally(() => {
                 row.loading = false
             })
     }
 
-    const getRoles = () => {
-        useHttp<PaginationResponse<Role>>({
-            url: '/system/role',
+    const getPermissions = () => {
+        useHttp<PaginationResponse<Permission>>({
+            url: '/system/permission',
             method: 'get',
             params: pickBy(params, identity)
         }).then(res => {
-            roles.items = res.data.items
-            roles.total = res.data.total
+            permissions.items = res.data.items
+            permissions.total = res.data.total
         })
     }
 
+    const getControllers = () => {
+        useHttp<Controller[]>({
+            url: '/system/permission/controllers',
+            method: 'get'
+        }).then(res => {
+            controllers.value = res.data
+        })
+    }
+
+    const getGroups = () => {
+        useHttp<PermissionGroup[]>({
+            url: '/system/permission/groups',
+            method: 'get'
+        }).then(res => {
+            groups.value = res.data
+        })
+    }
     onMounted(() => {
-        getRoles()
+        getControllers()
+        getPermissions()
+        getGroups()
     })
 </script>

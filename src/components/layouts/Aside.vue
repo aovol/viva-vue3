@@ -1,8 +1,8 @@
 <template>
-    <div class="aside flex flex-col border-r border-gray-100" style="width: 210px">
+    <div class="aside flex flex-col border-r border-secondary-light" style="width: 210px">
         <router-link
             to="/"
-            class="flex justify-center items-center h-14 shrink-0 border-b border-gray-100 bg-white"
+            class="flex justify-center items-center h-14 shrink-0 border-b border-secondary-light bg-white"
         >
             <img
                 class="h-7 cursor-pointer"

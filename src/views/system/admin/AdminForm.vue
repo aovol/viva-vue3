@@ -7,7 +7,7 @@
     >
         <t-form
             ref="form"
-            :rules="FORM_RULES"
+            :rules="rules"
             :data="adminForm"
             :colon="true"
             @reset="onReset"
@@ -48,11 +48,11 @@
     import { type FormProps, type FormInstanceFunctions, type InputProps } from 'tdesign-vue-next'
     import type { Admin } from '@/types/admin'
     import useHttp from '@/utils/useHttp'
-    const FORM_RULES: FormProps['rules'] = {
+    const rules: FormProps['rules'] = {
         name: [
             {
                 required: true,
-                message: '姓名必填'
+                message: '请输入用户名'
             }
         ]
     }
@@ -66,7 +66,7 @@
     })
     const form = ref<FormInstanceFunctions<typeof adminForm>>()
 
-    const show = (row: Admin) => {
+    const show = (row?: Admin) => {
         visible.value = true
         if (row) {
             adminForm.id = row.id
@@ -87,7 +87,7 @@
         resetForm()
     }
     const onSubmit: FormProps['onSubmit'] = ({ validateResult }) => {
-        if (!validateResult) return
+        if (!(validateResult === true)) return
         useHttp({
             url: adminForm.id ? '/system/admin/update' : '/system/admin/create',
             method: 'POST',
