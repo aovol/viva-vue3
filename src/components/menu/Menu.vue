@@ -8,9 +8,9 @@
         @change="handleChange"
         @expand="handleExpand"
     >
-        <template v-for="menu in menuStore.menus" :key="menu.id">
-            <SubMenu v-if="menu.children && menu.children.length > 0" :menu="menu" />
-            <MenuItem v-else :menu="menu" />
+        <template v-for="node in nodeStore.nodes" :key="node.id">
+            <SubMenu v-if="node?.children && node?.children?.length > 0" :node="node" />
+            <MenuItem v-else :node="node" />
         </template>
     </t-menu>
 </template>
@@ -18,7 +18,7 @@
 <script lang="ts" setup>
     import { ref, watch } from 'vue'
     import type { MenuProps } from 'tdesign-vue-next'
-    import { useMenuStore } from '@/store/useMenuStore'
+    import { useNodeStore } from '@/store/useNodeStore'
     import MenuItem from './MenuItem.vue'
     import SubMenu from './SubMenu.vue'
     import { useRouter, useRoute } from 'vue-router'
@@ -38,7 +38,7 @@
         }
     )
 
-    const menuStore = useMenuStore()
+    const nodeStore = useNodeStore()
     const collapsed = ref(false)
 
     const activeMenu = ref(route.path)

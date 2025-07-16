@@ -14,15 +14,13 @@ export interface Permission {
     slug: string
     group_name: string
     guard_name: string
-    controller: string
-    method: string
     description?: string
     created_at: string
     visible?: boolean
     loading?: boolean
 }
 
-export interface Controllers {
+export interface Test {
     [key: string]: Record<string, string[]>
 }
 

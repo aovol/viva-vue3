@@ -1,29 +1,29 @@
 <template>
     <t-submenu
-        :class="pKeys.includes(menu.path) ? 'is-active' : ''"
-        :value="menu.path"
-        v-if="menu.children && menu.children.length > 0"
+        :class="pKeys.includes(node.path) ? 'is-active' : ''"
+        :value="node.path"
+        v-if="node?.children && node?.children?.length > 0"
     >
         <template #icon>
             <t-icon name="control-platform" />
         </template>
         <template #title>
-            <span>{{ menu.name }}</span>
+            <span>{{ node.name }}</span>
         </template>
-        <template v-for="item in menu.children" :key="item.id">
-            <SubMenu v-if="item.children && item.children.length > 0" :menu="item" />
-            <MenuItem v-else :menu="item" />
+        <template v-for="item in node?.children" :key="item.id">
+            <SubMenu v-if="item.children && item.children.length > 0" :node="item" />
+            <MenuItem v-else :node="item" />
         </template>
     </t-submenu>
 </template>
 <script lang="ts" setup>
-    import type { Menu } from '@/types/menu'
+    import type { Node } from '@/types/node'
     import MenuItem from './MenuItem.vue'
     import { useRoute } from 'vue-router'
     const route = useRoute()
     import { ref, watch } from 'vue'
     defineProps<{
-        menu: Menu
+        node: Node
     }>()
 
     const pKeys = ref<string[]>([])

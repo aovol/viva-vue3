@@ -1,4 +1,4 @@
-export interface Menu {
+export interface Node {
     id?: number
     parent_id?: number
     name: string
@@ -10,5 +10,10 @@ export interface Menu {
     sort?: number
     status?: boolean
     show_page_head?: boolean
-    children?: Menu[]
+    type: 'menu' | 'permission'
+    children?: Node[]
+    is_show?: boolean
+    api?: string
+    create_type?: 'batch' | 'single'
+    batch_permissions?: string
 }

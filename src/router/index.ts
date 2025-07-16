@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import routes from './routes'
 import { includes } from 'lodash-es'
 import { useUserStore } from '@/store/useUserStore'
-import { useMenuStore } from '@/store/useMenuStore'
+import { useNodeStore } from '@/store/useNodeStore'
 import { initDynamicRoutes } from './dynamicRoutes'
 
 const router = createRouter({
@@ -12,7 +12,7 @@ const router = createRouter({
 const guestRoutes = ['/login']
 router.beforeEach(async (to, _, next) => {
     const userStore = useUserStore()
-    const menuStore = useMenuStore()
+    const nodeStore = useNodeStore()
     if (includes(guestRoutes, to.path)) {
         next()
         return
@@ -30,9 +30,9 @@ router.beforeEach(async (to, _, next) => {
             return
         }
     }
-    if (!menuStore.isRouted) {
+    if (!nodeStore.isRouted) {
         await initDynamicRoutes()
-        menuStore.setIsRouted(true)
+        nodeStore.setIsRouted(true)
         next({ ...to, replace: true })
     } else {
         next()

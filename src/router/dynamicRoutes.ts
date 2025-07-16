@@ -1,6 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router'
-import type { Menu } from '@/types/menu'
-import { useMenuStore } from '@/store/useMenuStore'
+import type { Node } from '@/types/node'
+import { useNodeStore } from '@/store/useNodeStore'
 import router from './index'
 import Empty from '@/components/layouts/Empty.vue'
 
@@ -12,7 +12,7 @@ export const initDynamicRoutes = async () => {
 const asyncViews = import.meta.glob('../views/**/**.vue')
 
 // 获取组件
-const getComponent = (item: Menu) => {
+const getComponent = (item: Node) => {
     let component: any = asyncViews[`../views${item.component}.vue`]
     if (!component) {
         component = asyncViews[`../views${item.component}/index.vue`]
@@ -78,11 +78,11 @@ const generateRoutes = (menus: any[], parentPath = ''): RouteRecordRaw[] => {
 }
 
 export const generateDynamicRoutes = () => {
-    const menuStore = useMenuStore()
-    const menus = menuStore.menus
+    const nodeStore = useNodeStore()
+    const nodes = nodeStore.nodes
 
-    if (!menus || menus.length === 0) {
-        console.warn('没有菜单数据，无法生成动态路由')
+    if (!nodes || nodes.length === 0) {
+        console.warn('没有节点数据，无法生成动态路由')
         return
     }
 
@@ -104,7 +104,7 @@ export const generateDynamicRoutes = () => {
         console.error('清除路由失败:', error)
     }
 
-    const routes = generateRoutes(menus)
+    const routes = generateRoutes(nodes)
 
     routes.forEach(route => {
         if (route.path === '/') return

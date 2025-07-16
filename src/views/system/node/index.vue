@@ -1,7 +1,7 @@
 <template>
     <div class="space-y-4">
         <div class="flex items-center gap-4">
-            <t-button @click="menuFormRef?.show()">添加菜单</t-button>
+            <t-button @click="nodeFormRef?.show()">添加节点</t-button>
             <t-button theme="default" @click="toggleExpandAll">{{
                 expandAll ? '收起全部' : '展开全部'
             }}</t-button>
@@ -12,7 +12,7 @@
                 ref="tableRef"
                 row-key="id"
                 drag-sort="row-handler"
-                :data="menuStore.menus"
+                :data="nodeStore.nodes"
                 :columns="columns"
                 :tree="{ indent: 25, treeNodeColumnIndex: 1 }"
                 :tree-expand-and-fold-icon="treeExpandIcon"
@@ -21,7 +21,7 @@
                 @drag-sort="onDragSort"
             ></t-enhanced-table>
         </div>
-        <MenuForm ref="menuFormRef" @success="getMenus" />
+        <NodeForm ref="nodeFormRef" @success="getNodes" />
     </div>
 </template>
 <script lang="tsx" setup>
@@ -34,16 +34,17 @@
         type ButtonProps
     } from 'tdesign-vue-next'
     import { ChevronRightIcon, ChevronDownIcon, MoveIcon } from 'tdesign-icons-vue-next'
-    import { useMenuStore } from '@/store/useMenuStore'
-    import MenuForm from './MenuForm.vue'
-    import type { Menu } from '@/types/menu'
+    import { useNodeStore } from '@/store/useNodeStore'
+    import NodeForm from './NodeForm.vue'
+    import type { Node } from '@/types/node'
     import { nextTick } from 'vue'
     import useHttp from '@/utils/useHttp'
-    const menuStore = useMenuStore()
+    import { useClipboard } from '@vueuse/core'
+    const nodeStore = useNodeStore()
     const expandAll = ref(true)
     const tableRef = ref<EnhancedTableInstanceFunctions | null>(null)
-    const menuFormRef = ref<InstanceType<typeof MenuForm> | null>(null)
-
+    const nodeFormRef = ref<InstanceType<typeof NodeForm> | null>(null)
+    const { copy } = useClipboard()
     const columns: EnhancedTableProps['columns'] = [
         {
             // 列拖拽排序必要参数
@@ -69,7 +70,20 @@
             colKey: 'slug',
             title: '标识',
             width: 200,
-            cell: (_, { row }) => <t-link>{row.slug}</t-link>
+            cell: (_, { row }) => (
+                <div class="flex items-center gap-2 group">
+                    <span>{row.slug}</span>
+                    <span class="hidden group-hover:block">
+                        <t-icon
+                            name="copy"
+                            class="cursor-pointer "
+                            onClick={() =>
+                                copy(row.slug).then(() => MessagePlugin.success('标识复制成功'))
+                            }
+                        />
+                    </span>
+                </div>
+            )
         },
         {
             colKey: 'path',
@@ -110,19 +124,19 @@
         }
     ]
     // 编辑
-    const onEditClick = (row: Menu) => {
-        menuFormRef.value?.show(row)
+    const onEditClick = (row: Node) => {
+        nodeFormRef.value?.show(row)
     }
     // 删除
-    const onDeleteConfirm = (row: Menu) => {
+    const onDeleteConfirm = (row: Node) => {
         useHttp({
-            url: '/system/menu/delete',
+            url: '/system/node/delete',
             method: 'post',
             data: {
-                menuId: row.id
+                nodeId: row.id
             }
         }).then(() => {
-            menuStore.getMenus()
+            nodeStore.getNodes()
         })
     }
 
@@ -157,8 +171,8 @@
     const treeExpandIcon = computed<EnhancedTableProps['treeExpandAndFoldIcon']>(() => {
         return treeExpandAndFoldIconRender
     })
-    const getMenus = async () => {
-        await menuStore.getMenus()
+    const getNodes = async () => {
+        await nodeStore.getNodes()
         nextTick(() => tableRef.value?.expandAll())
     }
     onMounted(() => tableRef.value?.expandAll())

@@ -1,16 +1,16 @@
 <template>
-    <t-menu-item :value="menu.path">
+    <t-menu-item :value="node.path">
         <template #icon>
             <t-icon :name="`server`" />
         </template>
-        {{ menu.name }}
+        {{ node.name }}
     </t-menu-item>
 </template>
 
 <script lang="ts" setup>
-    import type { Menu } from '@/types/menu'
+    import type { Node } from '@/types/node'
 
     defineProps<{
-        menu: Menu
+        node: Node
     }>()
 </script>

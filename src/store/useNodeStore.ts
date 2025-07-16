@@ -1,23 +1,23 @@
 import useHttp from '@/utils/useHttp'
 import { defineStore } from 'pinia'
-import type { Menu } from '@/types/menu'
+import type { Node } from '@/types/node'
 
 interface State {
     isRouted: boolean
-    menus: Menu[]
+    nodes: Node[]
 }
 
-export const useMenuStore = defineStore('useMenuStore', {
+export const useNodeStore = defineStore('useNodeStore', {
     state: (): State => ({
-        menus: [],
+        nodes: [],
         isRouted: false
     }),
     actions: {
-        async getMenus() {
-            const res = await useHttp<Menu[]>({
-                url: '/system/menu'
+        async getNodes() {
+            const res = await useHttp<Node[]>({
+                url: '/system/node'
             })
-            this.menus = res.data ?? []
+            this.nodes = res.data ?? []
         },
         setIsRouted(isRouted: boolean) {
             this.isRouted = isRouted

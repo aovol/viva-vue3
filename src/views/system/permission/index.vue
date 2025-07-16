@@ -45,12 +45,7 @@
             </t-table>
         </div>
 
-        <PermissionForm
-            ref="permissionFormRef"
-            @success="getPermissions"
-            :controllers="controllers"
-            :groups="groups"
-        />
+        <PermissionForm ref="permissionFormRef" @success="getPermissions" :groups="groups" />
     </t-space>
 </template>
 
@@ -61,13 +56,12 @@
     import PermissionForm from './PermissionForm.vue'
     import useHttp from '@/utils/useHttp'
     import type { PaginationResponse } from '@/types/http'
-    import type { Controller, Permission, PermissionGroup } from '@/types/role-permission'
+    import type { Permission, PermissionGroup } from '@/types/role-permission'
     import { identity, pickBy } from 'lodash-es'
     const params = reactive({
         guard: 'admin'
     })
     const permissionFormRef = ref<InstanceType<typeof PermissionForm>>()
-    const controllers = ref<Controller[]>([])
     const groups = ref<PermissionGroup[]>([])
     const permissions = reactive<PaginationResponse<Permission>>({
         items: [],
@@ -155,15 +149,6 @@
         })
     }
 
-    const getControllers = () => {
-        useHttp<Controller[]>({
-            url: '/system/permission/controllers',
-            method: 'get'
-        }).then(res => {
-            controllers.value = res.data
-        })
-    }
-
     const getGroups = () => {
         useHttp<PermissionGroup[]>({
             url: '/system/permission/groups',
@@ -173,7 +158,6 @@
         })
     }
     onMounted(() => {
-        getControllers()
         getPermissions()
         getGroups()
     })
