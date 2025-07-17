@@ -32,49 +32,51 @@ const getComponent = (item: Node) => {
 const generateRoutes = (menus: any[], parentPath = ''): RouteRecordRaw[] => {
     if (!menus || !menus.length) return []
 
-    return menus.map(menu => {
-        if (!menu.path) {
-            console.log('menu', menu)
-        }
-        const path =
-            menu.path && menu.path.startsWith('/')
-                ? menu.path
-                : parentPath
-                ? `${parentPath}/${menu.path}`
-                : `/${menu.path}`
+    return menus
+        .filter(menu => menu.type === 'menu')
+        .map(menu => {
+            if (!menu.path) {
+                console.log('menu', menu)
+            }
+            const path =
+                menu.path && menu.path.startsWith('/')
+                    ? menu.path
+                    : parentPath
+                    ? `${parentPath}/${menu.path}`
+                    : `/${menu.path}`
 
-        let name = `route-${menu.slug || path}`
-        if (menu.path === '/') {
-            name = 'index'
-        }
-        const route: RouteRecordRaw = {
-            path,
-            name,
-            component: getComponent(menu),
-            redirect: menu.redirect,
-            meta: {
-                title: menu.name,
-                icon: menu.icon,
-                data: menu
-            },
-            children: [] // 初始化children为空数组
-        }
-
-        // 处理子路由
-        if (menu.children && menu.children.length > 0) {
-            // 如果是顶级路由且有子路由，添加重定向到第一个子路由
-            if (!parentPath) {
-                route.redirect = menu.children[0].path.startsWith('/')
-                    ? menu.children[0].path
-                    : `${path}/${menu.children[0].path}`
+            let name = `route-${menu.slug || path}`
+            if (menu.path === '/') {
+                name = 'index'
+            }
+            const route: RouteRecordRaw = {
+                path,
+                name,
+                component: getComponent(menu),
+                redirect: menu.redirect,
+                meta: {
+                    title: menu.name,
+                    icon: menu.icon,
+                    data: menu
+                },
+                children: [] // 初始化children为空数组
             }
 
-            // 递归生成子路由
-            route.children = generateRoutes(menu.children, path)
-        }
+            // 处理子路由
+            if (menu.children && menu.children.length > 0) {
+                // 如果是顶级路由且有子路由，添加重定向到第一个子路由
+                if (!parentPath) {
+                    route.redirect = menu.children[0].path.startsWith('/')
+                        ? menu.children[0].path
+                        : `${path}/${menu.children[0].path}`
+                }
 
-        return route
-    })
+                // 递归生成子路由
+                route.children = generateRoutes(menu.children, path)
+            }
+
+            return route
+        })
 }
 
 export const generateDynamicRoutes = () => {
@@ -108,6 +110,8 @@ export const generateDynamicRoutes = () => {
 
     routes.forEach(route => {
         if (route.path === '/') return
+        console.log('route', route)
+
         router.addRoute('root', route)
     })
 

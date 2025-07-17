@@ -19,6 +19,7 @@
                 :before-drag-sort="beforeDragSort"
                 @abnormal-drag-sort="onAbnormalDragSort"
                 @drag-sort="onDragSort"
+                cell-empty-content="-"
             ></t-enhanced-table>
         </div>
         <NodeForm ref="nodeFormRef" @success="getNodes" />
@@ -34,12 +35,11 @@
         type ButtonProps
     } from 'tdesign-vue-next'
     import { ChevronRightIcon, ChevronDownIcon, MoveIcon } from 'tdesign-icons-vue-next'
-    import { useNodeStore } from '@/store/useNodeStore'
     import NodeForm from './NodeForm.vue'
     import type { Node } from '@/types/node'
-    import { nextTick } from 'vue'
     import useHttp from '@/utils/useHttp'
     import { useClipboard } from '@vueuse/core'
+    import { useNodeStore } from '@/store/useNodeStore'
     const nodeStore = useNodeStore()
     const expandAll = ref(true)
     const tableRef = ref<EnhancedTableInstanceFunctions | null>(null)
@@ -84,6 +84,11 @@
                     </span>
                 </div>
             )
+        },
+        {
+            colKey: 'type',
+            title: '类型',
+            width: 100
         },
         {
             colKey: 'path',
@@ -136,7 +141,7 @@
                 nodeId: row.id
             }
         }).then(() => {
-            nodeStore.getNodes()
+            getNodes()
         })
     }
 
@@ -173,7 +178,9 @@
     })
     const getNodes = async () => {
         await nodeStore.getNodes()
-        nextTick(() => tableRef.value?.expandAll())
+        tableRef.value?.expandAll()
     }
-    onMounted(() => tableRef.value?.expandAll())
+    onMounted(() => {
+        getNodes()
+    })
 </script>

@@ -37,15 +37,19 @@
                     <t-radio-button value="permission">权限</t-radio-button>
                 </t-radio-group>
             </t-form-item>
-            <div
-                class="flex items-center justify-center w-full my-5"
-                v-if="menuForm.type === 'permission'"
-            >
-                <t-radio-group variant="default-filled" v-model="menuForm.create_type">
-                    <t-radio-button value="single">单个添加</t-radio-button>
-                    <t-radio-button value="batch">批量添加</t-radio-button>
-                </t-radio-group>
-            </div>
+            <template v-if="menuForm.type === 'permission' && !menuForm.id">
+                <div class="flex items-center justify-center w-full my-5">
+                    <t-radio-group
+                        variant="default-filled"
+                        v-model="menuForm.create_type"
+                        @change="onCreateTypeChange"
+                    >
+                        <t-radio-button value="single">单个添加</t-radio-button>
+                        <t-radio-button value="batch">批量添加</t-radio-button>
+                    </t-radio-group>
+                </div>
+            </template>
+
             <template v-if="menuForm.create_type === 'single'">
                 <t-form-item label="名称" name="name">
                     <t-input
@@ -285,20 +289,29 @@
     }
 
     const onTypeChange = (value: string) => {
-        if (value === 'menu') {
-            menuForm.create_type = 'single'
-            menuForm.batch_permissions = ''
-            menuForm.api = ''
-            menuForm.show_page_head = true
-            menuForm.is_show = true
-        } else {
-            menuForm.slug = ''
-            menuForm.path = ''
-            menuForm.component = ''
-            menuForm.redirect = ''
-            menuForm.sort = undefined
-            menuForm.show_page_head = true
-            menuForm.is_show = false
-        }
+        // if (value === 'menu') {
+        //     menuForm.create_type = 'single'
+        //     menuForm.batch_permissions = ''
+        //     menuForm.api = ''
+        //     menuForm.show_page_head = true
+        //     menuForm.is_show = true
+        // } else {
+        //     menuForm.slug = ''
+        //     menuForm.path = ''
+        //     menuForm.component = ''
+        //     menuForm.redirect = ''
+        //     menuForm.sort = undefined
+        //     menuForm.show_page_head = true
+        //     menuForm.is_show = false
+        // }
+    }
+
+    const onCreateTypeChange = (value: string) => {
+        // if (value === 'batch') {
+        //     menuForm.name = ''
+        //     menuForm.slug = ''
+        // } else {
+        //     menuForm.batch_permissions = ''
+        // }
     }
 </script>

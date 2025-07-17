@@ -1,11 +1,11 @@
 <template>
-    <t-dialog
+    <t-drawer
         v-model:visible="visible"
-        :footer="false"
-        @closed="onClosed"
+        @close="onClosed"
         :header="`${roleForm.id ? '编辑' : '添加'}角色`"
-        width="300px"
+        size="500px"
     >
+        {{ roleForm.node_ids }}
         <t-form
             ref="form"
             :rules="rules"
@@ -36,6 +36,9 @@
                     @enter="onEnter"
                 ></t-input>
             </t-form-item>
+            <t-form-item label="节点权限" name="node_ids">
+                <NodeSelector v-model:nodes="roleForm.node_ids" />
+            </t-form-item>
             <t-form-item>
                 <t-button
                     block
@@ -46,7 +49,7 @@
                 >
             </t-form-item>
         </t-form>
-    </t-dialog>
+    </t-drawer>
 </template>
 <script lang="ts" setup>
     import { ref, reactive } from 'vue'
@@ -54,6 +57,7 @@
     import useHttp from '@/utils/useHttp'
     import type { Role } from '@/types/role-permission'
     import { useAppStore } from '@/store/useAppStore'
+    import NodeSelector from '../node/NodeSelector.vue'
     const appStore = useAppStore()
     const rules: FormProps['rules'] = {
         name: [
@@ -77,11 +81,12 @@
     }
     const visible = ref(false)
     const emit = defineEmits(['success'])
-    const roleForm = reactive({
+    const roleForm = reactive<Role>({
         id: 0,
         name: '',
         guard_name: 'admin',
-        slug: ''
+        slug: '',
+        node_ids: []
     })
     const form = ref<FormInstanceFunctions<typeof roleForm>>()
 
@@ -92,6 +97,7 @@
             roleForm.name = row.name
             roleForm.guard_name = row.guard_name
             roleForm.slug = row.slug
+            roleForm.node_ids = row.node_ids || []
         }
     }
 
@@ -102,6 +108,7 @@
         roleForm.name = ''
         roleForm.guard_name = 'admin'
         roleForm.slug = ''
+        roleForm.node_ids = []
         form.value?.reset()
     }
     const onReset: FormProps['onReset'] = () => {

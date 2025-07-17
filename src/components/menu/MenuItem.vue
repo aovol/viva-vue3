@@ -1,5 +1,5 @@
 <template>
-    <t-menu-item :value="node.path">
+    <t-menu-item :value="node.path" v-if="node.type === 'menu'">
         <template #icon>
             <t-icon :name="`server`" />
         </template>

@@ -1,11 +1,12 @@
 export interface Role {
-    id: number
+    id?: number
     name: string
     guard_name: string
     slug: string
-    created_at: string
+    created_at?: string
     visible?: boolean
     loading?: boolean
+    node_ids?: number[]
 }
 
 export interface Permission {

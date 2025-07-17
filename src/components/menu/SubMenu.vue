@@ -2,7 +2,7 @@
     <t-submenu
         :class="pKeys.includes(node.path) ? 'is-active' : ''"
         :value="node.path"
-        v-if="node?.children && node?.children?.length > 0"
+        v-if="node.type === 'menu'"
     >
         <template #icon>
             <t-icon name="control-platform" />
@@ -11,7 +11,12 @@
             <span>{{ node.name }}</span>
         </template>
         <template v-for="item in node?.children" :key="item.id">
-            <SubMenu v-if="item.children && item.children.length > 0" :node="item" />
+            <SubMenu
+                v-if="
+                    item.children && item.children.filter(item => item.type === 'menu').length > 0
+                "
+                :node="item"
+            />
             <MenuItem v-else :node="item" />
         </template>
     </t-submenu>
@@ -33,6 +38,8 @@
             const parentPath = route.matched[route.matched.length - 2]?.path
             if (parentPath) {
                 pKeys.value = [parentPath]
+            } else {
+                pKeys.value = []
             }
         },
         {

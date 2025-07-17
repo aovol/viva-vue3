@@ -9,8 +9,10 @@
         @expand="handleExpand"
     >
         <template v-for="node in nodeStore.nodes" :key="node.id">
-            <SubMenu v-if="node?.children && node?.children?.length > 0" :node="node" />
-            <MenuItem v-else :node="node" />
+            <template v-if="node.type === 'menu'">
+                <SubMenu v-if="node?.children && node?.children?.length > 0" :node="node" />
+                <MenuItem v-else :node="node" />
+            </template>
         </template>
     </t-menu>
 </template>
@@ -28,7 +30,8 @@
     watch(
         () => route.path,
         () => {
-            const parentPath = route.matched[route.matched.length - 2]?.path
+            const parentPath = route.path.split('/').slice(0, -1).join('/')
+
             if (parentPath) {
                 expandedKeys.value = [parentPath]
             }
