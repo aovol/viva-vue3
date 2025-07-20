@@ -2,7 +2,8 @@
     <t-space direction="vertical" class="border border-secondary-light w-full py-4">
         <div class="flex justify-between px-4">
             <div class="">
-                当前选中节点: <span class="text-primary">{{ checkedNodes.length }}</span> 个节点
+                当前选中节点:
+                <span class="text-primary">{{ checkedNodes.length || 0 }}</span> 个节点
             </div>
         </div>
         <div class="border-b border-secondary-light px-4">
@@ -20,7 +21,7 @@
             hover
             line
             expand-all
-            :keys="{ label: 'name', value: 'id' }"
+            :keys="{ label: 'name', value: 'path' }"
         />
     </t-space>
 </template>
@@ -33,12 +34,12 @@
     const demo1Text = ref('')
     const demo1Filter = ref<TreeProps['filter']>(null as any)
     const props = defineProps<{
-        nodes: number[]
+        nodes: string[]
     }>()
 
     const checkedNodes = computed({
         get: () => props.nodes,
-        set: (value: number[]) => {
+        set: (value: string[]) => {
             emit('update:nodes', value)
         }
     })
@@ -56,7 +57,7 @@
         }
     }
     const emit = defineEmits(['update:nodes'])
-    const updateNodes = (nodes: number[]) => {
+    const updateNodes = (nodes: string[]) => {
         emit('update:nodes', nodes)
     }
 </script>

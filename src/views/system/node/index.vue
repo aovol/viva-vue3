@@ -67,35 +67,35 @@
             )
         },
         {
-            colKey: 'slug',
-            title: '标识',
+            colKey: 'type',
+            title: '类型',
+            width: 100,
+            cell: (_, { row }) => (
+                <t-tag theme={row.type === 'menu' ? 'primary' : 'default'}>
+                    {row.type === 'menu' ? '菜单' : '权限'}
+                </t-tag>
+            )
+        },
+        {
+            colKey: 'path',
+            title: 'API/路由',
             width: 200,
             cell: (_, { row }) => (
                 <div class="flex items-center gap-2 group">
-                    <span>{row.slug}</span>
+                    <span>{row.path}</span>
                     <span class="hidden group-hover:block">
                         <t-icon
                             name="copy"
                             class="cursor-pointer "
                             onClick={() =>
-                                copy(row.slug).then(() => MessagePlugin.success('标识复制成功'))
+                                copy(row.path).then(() => MessagePlugin.success('标识复制成功'))
                             }
                         />
                     </span>
                 </div>
             )
         },
-        {
-            colKey: 'type',
-            title: '类型',
-            width: 100
-        },
-        {
-            colKey: 'path',
-            title: '路由',
-            width: 200,
-            cell: (_, { row }) => <t-link>{row.path}</t-link>
-        },
+
         {
             colKey: 'component',
             title: '组件',
@@ -107,6 +107,13 @@
             title: '重定向',
             width: 200,
             cell: (_, { row }) => <t-link>{row.redirect || '-'}</t-link>
+        },
+
+        {
+            colKey: 'method',
+            title: '请求方法',
+            width: 100,
+            cell: (_, { row }) => <>{row.method || '-'}</>
         },
         {
             colKey: 'operate',
@@ -181,6 +188,6 @@
         tableRef.value?.expandAll()
     }
     onMounted(() => {
-        getNodes()
+        tableRef.value?.expandAll()
     })
 </script>

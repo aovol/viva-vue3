@@ -3,9 +3,8 @@
         v-model:visible="visible"
         @close="onClosed"
         :header="`${roleForm.id ? '编辑' : '添加'}角色`"
-        size="500px"
+        size="700px"
     >
-        {{ roleForm.node_ids }}
         <t-form
             ref="form"
             :rules="rules"
@@ -15,12 +14,6 @@
             @submit="onSubmit"
             label-align="top"
         >
-            <t-form-item label="角色类型" name="guard_name">
-                <t-select v-model="roleForm.guard_name" placeholder="请选择角色类型" clearable>
-                    <t-option value="admin" label="管理员"></t-option>
-                    <t-option value="user" label="用户"></t-option>
-                </t-select>
-            </t-form-item>
             <t-form-item label="角色名称" name="name">
                 <t-input
                     v-model="roleForm.name"
@@ -37,7 +30,7 @@
                 ></t-input>
             </t-form-item>
             <t-form-item label="节点权限" name="node_ids">
-                <NodeSelector v-model:nodes="roleForm.node_ids" />
+                <NodeSelector v-model:nodes="roleForm.node_paths" />
             </t-form-item>
             <t-form-item>
                 <t-button
@@ -71,12 +64,6 @@
                 required: true,
                 message: '请输入角色标识'
             }
-        ],
-        guard_name: [
-            {
-                required: true,
-                message: '请选择角色类型'
-            }
         ]
     }
     const visible = ref(false)
@@ -84,9 +71,8 @@
     const roleForm = reactive<Role>({
         id: 0,
         name: '',
-        guard_name: 'admin',
         slug: '',
-        node_ids: []
+        node_paths: []
     })
     const form = ref<FormInstanceFunctions<typeof roleForm>>()
 
@@ -95,9 +81,8 @@
         if (row) {
             roleForm.id = row.id
             roleForm.name = row.name
-            roleForm.guard_name = row.guard_name
             roleForm.slug = row.slug
-            roleForm.node_ids = row.node_ids || []
+            roleForm.node_paths = row.node_paths || []
         }
     }
 
@@ -106,9 +91,8 @@
     const resetForm = () => {
         roleForm.id = 0
         roleForm.name = ''
-        roleForm.guard_name = 'admin'
         roleForm.slug = ''
-        roleForm.node_ids = []
+        roleForm.node_paths = []
         form.value?.reset()
     }
     const onReset: FormProps['onReset'] = () => {
@@ -118,7 +102,7 @@
         if (!(validateResult === true)) return
         useHttp({
             url: roleForm.id ? '/system/role/update' : '/system/role/create',
-            method: 'POST',
+            method: roleForm.id ? 'PUT' : 'POST',
             data: roleForm
         }).then(_ => {
             onClosed()

@@ -2,7 +2,6 @@ export interface Node {
     id?: number
     parent_id?: number
     name: string
-    slug: string
     path: string
     icon?: string
     component: string
@@ -13,7 +12,7 @@ export interface Node {
     type: 'menu' | 'permission'
     children?: Node[]
     is_show?: boolean
-    api?: string
+    method?: 'GET' | 'POST' | 'PUT' | 'DELETE'
     create_type?: 'batch' | 'single'
     batch_permissions?: string
 }

@@ -656,7 +656,7 @@
     /* background-color: var(--td-bg-color-secondarycontainer); */
 }
 .t-default-menu .t-submenu.is-active {
-    background-color: var(--td-bg-color-secondarycontainer);
+    /* background-color: var(--td-bg-color-secondarycontainer); */
 }
 
 .t-default-menu .t-menu__operations:not(:empty) {

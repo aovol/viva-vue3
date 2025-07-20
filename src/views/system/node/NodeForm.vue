@@ -1,9 +1,11 @@
 <template>
-    <t-dialog
+    <t-drawer
         v-model:visible="visible"
         :footer="false"
         @closed="onClosed"
         :header="`${menuForm.id ? '编辑' : '添加'}节点`"
+        @close="onClosed"
+        size="600px"
     >
         <t-form ref="form" :rules="rules" :data="menuForm" :colon="true" @submit="onSubmit">
             <t-form-item label="父级节点" name="parent_id">
@@ -59,23 +61,26 @@
                         @enter="onEnter"
                     ></t-input>
                 </t-form-item>
-
-                <t-form-item label="标识" name="slug">
+                <t-form-item :label="menuForm.type === 'menu' ? '路由' : 'API'" name="path">
+                    <template #help>
+                        当节点类型为权限时，请输入节点API，如：/api/v1/user/list
+                    </template>
                     <t-input
                         clearable
-                        v-model="menuForm.slug"
-                        placeholder="请输入节点唯一标识"
+                        v-model="menuForm.path"
+                        :placeholder="menuForm.type === 'menu' ? '请输入节点路径' : '请输入节点API'"
                         @enter="onEnter"
                     ></t-input>
                 </t-form-item>
+
                 <template v-if="menuForm.type === 'permission'">
-                    <t-form-item label="API" name="api">
-                        <t-input
-                            clearable
-                            v-model="menuForm.api"
-                            placeholder="请输入节点API"
-                            @enter="onEnter"
-                        ></t-input>
+                    <t-form-item label="请求方法" name="method">
+                        <t-radio-group variant="default-filled" v-model="menuForm.method">
+                            <t-radio-button value="GET">GET</t-radio-button>
+                            <t-radio-button value="POST">POST</t-radio-button>
+                            <t-radio-button value="PUT">PUT</t-radio-button>
+                            <t-radio-button value="DELETE">DELETE</t-radio-button>
+                        </t-radio-group>
                     </t-form-item>
                 </template>
             </template>
@@ -83,7 +88,7 @@
                 <t-form-item label="批量添加" name="batch_permissions">
                     <template #help>
                         <p>请输入批量添加的权限，每行一个</p>
-                        <p>格式为：名称|标识|API，API为空则不添加</p>
+                        <p>格式为：名称|标识|API|请求方法</p>
                     </template>
                     <t-textarea
                         :autosize="{ minRows: 5 }"
@@ -95,15 +100,6 @@
             </template>
 
             <template v-if="menuForm.type === 'menu'">
-                <t-form-item label="路由" name="path">
-                    <t-input
-                        clearable
-                        v-model="menuForm.path"
-                        placeholder="请输入节点路径"
-                        @enter="onEnter"
-                    ></t-input>
-                </t-form-item>
-
                 <t-form-item label="组件" name="component">
                     <t-input
                         clearable
@@ -171,16 +167,17 @@
                 </t-space>
             </t-form-item>
         </t-form>
-    </t-dialog>
+    </t-drawer>
 </template>
 
 <script setup lang="ts">
-    import { ref, reactive } from 'vue'
+    import { ref, reactive, computed } from 'vue'
     import type { Node } from '@/types/node'
     import { type FormProps, type FormInstanceFunctions, type InputProps } from 'tdesign-vue-next'
     import useHttp from '@/utils/useHttp'
     import { useAppStore } from '@/store/useAppStore'
     import { useNodeStore } from '@/store/useNodeStore'
+    import { identity, pickBy } from 'lodash-es'
     const nodeStore = useNodeStore()
     const appStore = useAppStore()
     const visible = ref(false)
@@ -188,30 +185,29 @@
     const emit = defineEmits(['success'])
     //form
     const rules = {
-        name: [
-            {
-                required: true,
-                message: '请输入菜单名称'
-            }
-        ],
-        slug: [
-            {
-                required: true,
-                message: '请输入菜单标识'
-            }
-        ],
-        path: [
-            {
-                required: true,
-                message: '请输入菜单路由'
-            }
-        ]
+        // name: [
+        //     {
+        //         required: true,
+        //         message: '请输入菜单名称'
+        //     }
+        // ],
+        // path: [
+        //     {
+        //         required: true,
+        //         message: '请输入菜单路由'
+        //     }
+        // ]
+        // method: [
+        //     {
+        //         required: computed(() => menuForm.type === 'permission'),
+        //         message: '请选择请求方法'
+        //     }
+        // ]
     }
     const menuForm: Node = reactive({
         id: undefined,
         parent_id: undefined,
         name: '',
-        slug: '',
         path: '',
         icon: '',
         component: '',
@@ -221,7 +217,7 @@
         show_page_head: true,
         type: 'menu',
         is_show: true,
-        api: '',
+        method: 'GET',
         create_type: 'single'
     })
 
@@ -230,7 +226,6 @@
         menuForm.id = undefined
         menuForm.parent_id = undefined
         menuForm.name = ''
-        menuForm.slug = ''
         menuForm.path = ''
         menuForm.icon = ''
         menuForm.component = ''
@@ -240,7 +235,7 @@
         menuForm.show_page_head = true
         menuForm.type = 'menu'
         menuForm.is_show = true
-        menuForm.api = ''
+        menuForm.method = 'GET'
         menuForm.create_type = 'single'
     }
 
@@ -249,7 +244,6 @@
             menuForm.id = node.id
             menuForm.parent_id = node.parent_id
             menuForm.name = node.name
-            menuForm.slug = node.slug
             menuForm.path = node.path
             menuForm.icon = node.icon
             menuForm.component = node.component
@@ -259,7 +253,7 @@
             menuForm.show_page_head = node.show_page_head ?? true
             menuForm.type = node.type
             menuForm.is_show = node.is_show ?? false
-            menuForm.api = node.api ?? ''
+            menuForm.method = node.method ?? 'GET'
         }
         visible.value = true
     }
@@ -272,8 +266,8 @@
         const url = menuForm.id ? '/system/node/update' : '/system/node/create'
         useHttp({
             url,
-            method: 'post',
-            data: menuForm
+            method: menuForm.id ? 'PUT' : 'POST',
+            data: pickBy(menuForm, identity)
         }).then(_ => {
             onClosed()
             emit('success')
@@ -296,7 +290,6 @@
         //     menuForm.show_page_head = true
         //     menuForm.is_show = true
         // } else {
-        //     menuForm.slug = ''
         //     menuForm.path = ''
         //     menuForm.component = ''
         //     menuForm.redirect = ''
@@ -309,7 +302,6 @@
     const onCreateTypeChange = (value: string) => {
         // if (value === 'batch') {
         //     menuForm.name = ''
-        //     menuForm.slug = ''
         // } else {
         //     menuForm.batch_permissions = ''
         // }

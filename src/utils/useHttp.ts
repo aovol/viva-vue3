@@ -42,10 +42,10 @@ instance.interceptors.response.use(
         return Promise.reject(response.data)
     },
     error => {
-        if (error.response && error.response.status === 401) {
-            useUserStore().logout()
-            // window.location.href = '/login'
-        }
+        // if (error.response && error.response.status === 401) {
+        //     useUserStore().logout()
+        //     // window.location.href = '/login'
+        // }
         return Promise.reject(error)
     }
 )

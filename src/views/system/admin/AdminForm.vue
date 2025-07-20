@@ -20,6 +20,19 @@
                     @enter="onEnter"
                 ></t-input>
             </t-form-item>
+            <t-form-item label="角色" name="role_slugs">
+                <t-select v-model="adminForm.role_slugs" placeholder="请选择角色" multiple>
+                    <t-option label="全选" :check-all="true" />
+                    <t-option
+                        v-for="role in roles"
+                        :key="role.id"
+                        :value="role.slug"
+                        :label="role.name"
+                    >
+                        {{ role.name }}
+                    </t-option>
+                </t-select>
+            </t-form-item>
             <t-form-item label="密码" name="password">
                 <t-input
                     v-model="adminForm.password"
@@ -44,10 +57,11 @@
     </t-dialog>
 </template>
 <script lang="ts" setup>
-    import { ref, reactive } from 'vue'
+    import { ref, reactive, onMounted } from 'vue'
     import { type FormProps, type FormInstanceFunctions, type InputProps } from 'tdesign-vue-next'
     import type { Admin } from '@/types/admin'
     import useHttp from '@/utils/useHttp'
+    import type { Role } from '@/types/role-permission'
     const rules: FormProps['rules'] = {
         name: [
             {
@@ -58,11 +72,12 @@
     }
     const visible = ref(false)
     const emit = defineEmits(['success'])
-    const adminForm = reactive({
+    const adminForm = reactive<Admin>({
         id: 0,
         name: '',
         password: '',
-        password_confirmation: ''
+        password_confirmation: '',
+        role_slugs: []
     })
     const form = ref<FormInstanceFunctions<typeof adminForm>>()
 
@@ -71,6 +86,7 @@
         if (row) {
             adminForm.id = row.id
             adminForm.name = row.name
+            adminForm.role_slugs = row.role_slugs || []
         }
     }
 
@@ -81,6 +97,7 @@
         adminForm.name = ''
         adminForm.password = ''
         adminForm.password_confirmation = ''
+        adminForm.role_slugs = []
         form.value?.reset()
     }
     const onReset: FormProps['onReset'] = () => {
@@ -90,7 +107,7 @@
         if (!(validateResult === true)) return
         useHttp({
             url: adminForm.id ? '/system/admin/update' : '/system/admin/create',
-            method: 'POST',
+            method: adminForm.id ? 'PUT' : 'POST',
             data: adminForm
         }).then(_ => {
             onClosed()
@@ -106,4 +123,19 @@
         visible.value = false
         resetForm()
     }
+
+    const roles = ref<Role[]>([])
+    const getRoles = () => {
+        useHttp<Role[]>({
+            url: '/system/role',
+            method: 'GET',
+            params: { fetchAll: true }
+        }).then(res => {
+            roles.value = res.data
+        })
+    }
+
+    onMounted(() => {
+        getRoles()
+    })
 </script>
