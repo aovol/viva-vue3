@@ -11,7 +11,7 @@
         <template v-for="node in nodeStore.nodes" :key="node.id">
             <template v-if="node.type === 'menu'">
                 <SubMenu v-if="node?.children && node?.children?.length > 0" :node="node" />
-                <MenuItem v-else :node="node" />
+                <MenuItem v-else :node="node" :topLevel="true" />
             </template>
         </template>
     </t-menu>

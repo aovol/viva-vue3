@@ -36,7 +36,7 @@ const generateRoutes = (menus: any[], parentPath = ''): RouteRecordRaw[] => {
         .filter(menu => menu.type === 'menu')
         .map(menu => {
             if (!menu.path) {
-                console.log('menu', menu)
+                // todo
             }
             let path =
                 menu.path && menu.path.startsWith('/')
@@ -109,7 +109,6 @@ export const generateDynamicRoutes = () => {
 
     routes.forEach(route => {
         if (route.path === '/') return
-        console.log('route', route)
 
         router.addRoute('root', route)
     })

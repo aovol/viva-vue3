@@ -49,7 +49,15 @@
             </t-form-item>
             <t-form-item>
                 <t-space size="small">
-                    <t-button theme="primary" type="submit">提交</t-button>
+                    <t-button
+                        theme="primary"
+                        type="submit"
+                        :loading="
+                            appStore.isLoading('/system/admin/create') ||
+                            appStore.isLoading('/system/admin/update')
+                        "
+                        >提交</t-button
+                    >
                     <t-button theme="default" variant="base" type="reset">重置</t-button>
                 </t-space>
             </t-form-item>
@@ -62,6 +70,8 @@
     import type { Admin } from '@/types/admin'
     import useHttp from '@/utils/useHttp'
     import type { Role } from '@/types/role-permission'
+    import { useAppStore } from '@/store/useAppStore'
+    const appStore = useAppStore()
     const rules: FormProps['rules'] = {
         name: [
             {

@@ -5,7 +5,7 @@ export interface Role {
     created_at?: string
     visible?: boolean
     loading?: boolean
-    node_paths: string[]
+    node_ids: number[]
 }
 
 export interface Test {

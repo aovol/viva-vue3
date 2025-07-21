@@ -21,7 +21,7 @@
             hover
             line
             expand-all
-            :keys="{ label: 'name', value: 'path' }"
+            :keys="{ label: 'name', value: 'id' }"
         />
     </t-space>
 </template>
@@ -34,12 +34,12 @@
     const demo1Text = ref('')
     const demo1Filter = ref<TreeProps['filter']>(null as any)
     const props = defineProps<{
-        nodes: string[]
+        nodes: number[]
     }>()
 
     const checkedNodes = computed({
         get: () => props.nodes,
-        set: (value: string[]) => {
+        set: (value: number[]) => {
             emit('update:nodes', value)
         }
     })
@@ -57,7 +57,7 @@
         }
     }
     const emit = defineEmits(['update:nodes'])
-    const updateNodes = (nodes: string[]) => {
+    const updateNodes = (nodes: number[]) => {
         emit('update:nodes', nodes)
     }
 </script>

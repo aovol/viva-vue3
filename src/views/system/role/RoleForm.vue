@@ -30,14 +30,17 @@
                 ></t-input>
             </t-form-item>
             <t-form-item label="节点权限" name="node_ids">
-                <NodeSelector v-model:nodes="roleForm.node_paths" />
+                <NodeSelector v-model:nodes="roleForm.node_ids" />
             </t-form-item>
             <t-form-item>
                 <t-button
                     block
                     theme="primary"
                     type="submit"
-                    :loading="appStore.isLoading('/system/role/create')"
+                    :loading="
+                        appStore.isLoading('/system/role/create') ||
+                        appStore.isLoading('/system/role/update')
+                    "
                     >提交</t-button
                 >
             </t-form-item>
@@ -72,7 +75,7 @@
         id: 0,
         name: '',
         slug: '',
-        node_paths: []
+        node_ids: []
     })
     const form = ref<FormInstanceFunctions<typeof roleForm>>()
 
@@ -82,7 +85,7 @@
             roleForm.id = row.id
             roleForm.name = row.name
             roleForm.slug = row.slug
-            roleForm.node_paths = row.node_paths || []
+            roleForm.node_ids = row.node_ids || []
         }
     }
 
@@ -92,7 +95,7 @@
         roleForm.id = 0
         roleForm.name = ''
         roleForm.slug = ''
-        roleForm.node_paths = []
+        roleForm.node_ids = []
         form.value?.reset()
     }
     const onReset: FormProps['onReset'] = () => {

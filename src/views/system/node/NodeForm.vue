@@ -61,17 +61,6 @@
                         @enter="onEnter"
                     ></t-input>
                 </t-form-item>
-                <t-form-item :label="menuForm.type === 'menu' ? '路由' : 'API'" name="path">
-                    <template #help>
-                        当节点类型为权限时，请输入节点API，如：/api/v1/user/list
-                    </template>
-                    <t-input
-                        clearable
-                        v-model="menuForm.path"
-                        :placeholder="menuForm.type === 'menu' ? '请输入节点路径' : '请输入节点API'"
-                        @enter="onEnter"
-                    ></t-input>
-                </t-form-item>
 
                 <template v-if="menuForm.type === 'permission'">
                     <t-form-item label="请求方法" name="method">
@@ -81,6 +70,27 @@
                             <t-radio-button value="PUT">PUT</t-radio-button>
                             <t-radio-button value="DELETE">DELETE</t-radio-button>
                         </t-radio-group>
+                    </t-form-item>
+                    <t-form-item label="API" name="api">
+                        <template #help>
+                            当节点类型为权限时，请输入节点API，如：/api/v1/user/list
+                        </template>
+                        <t-input
+                            clearable
+                            v-model="menuForm.api"
+                            placeholder="请输入节点API"
+                            @enter="onEnter"
+                        ></t-input>
+                    </t-form-item>
+                </template>
+                <template v-if="menuForm.type === 'menu'">
+                    <t-form-item label="路由" name="path">
+                        <t-input
+                            clearable
+                            v-model="menuForm.path"
+                            placeholder="请输入节点路由"
+                            @enter="onEnter"
+                        ></t-input>
                     </t-form-item>
                 </template>
             </template>
@@ -154,13 +164,15 @@
                     <template #label="slotProps">{{ slotProps.value ? '启用' : '禁用' }}</template>
                 </t-switch>
             </t-form-item>
-
             <t-form-item>
                 <t-space size="small">
                     <t-button
                         theme="primary"
                         type="submit"
-                        :loading="appStore.isLoading('/menu/create')"
+                        :loading="
+                            appStore.isLoading('/system/node/create') ||
+                            appStore.isLoading('/system/node/update')
+                        "
                         >提交</t-button
                     >
                     <t-button theme="default" variant="base" @click="onClosed">取消</t-button>
@@ -185,30 +197,31 @@
     const emit = defineEmits(['success'])
     //form
     const rules = {
-        // name: [
-        //     {
-        //         required: true,
-        //         message: '请输入菜单名称'
-        //     }
-        // ],
-        // path: [
-        //     {
-        //         required: true,
-        //         message: '请输入菜单路由'
-        //     }
-        // ]
-        // method: [
-        //     {
-        //         required: computed(() => menuForm.type === 'permission'),
-        //         message: '请选择请求方法'
-        //     }
-        // ]
+        name: [
+            {
+                required: true,
+                message: '请输入菜单名称'
+            }
+        ],
+        path: [
+            {
+                required: computed(() => menuForm.type === 'menu'),
+                message: '请输入菜单路由'
+            }
+        ],
+        method: [
+            {
+                required: computed(() => menuForm.type === 'permission'),
+                message: '请选择请求方法'
+            }
+        ]
     }
     const menuForm: Node = reactive({
         id: undefined,
         parent_id: undefined,
         name: '',
         path: '',
+        api: '',
         icon: '',
         component: '',
         redirect: '',
@@ -227,6 +240,7 @@
         menuForm.parent_id = undefined
         menuForm.name = ''
         menuForm.path = ''
+        menuForm.api = ''
         menuForm.icon = ''
         menuForm.component = ''
         menuForm.redirect = ''
@@ -245,6 +259,7 @@
             menuForm.parent_id = node.parent_id
             menuForm.name = node.name
             menuForm.path = node.path
+            menuForm.api = node.api
             menuForm.icon = node.icon
             menuForm.component = node.component
             menuForm.redirect = node.redirect

@@ -53,9 +53,7 @@ instance.interceptors.response.use(
 const useHttp = <T>(req: BaseRequestConfig): Promise<BaseResponseConfig<T>> => {
     const { url, method = 'get', data, params, headers = {} } = req
     const showMsg = req.showMsg ?? method.toLowerCase() !== 'get'
-    const loading = req.loading ?? true
     const appStore = useAppStore()
-    loading && appStore.$patch({ reqLoading: true })
     return new Promise((resolve, reject) => {
         instance({
             url,
@@ -66,12 +64,10 @@ const useHttp = <T>(req: BaseRequestConfig): Promise<BaseResponseConfig<T>> => {
         })
             .then((res: BaseResponseConfig<T>) => {
                 showMsg && res.msg && message.success(res.msg)
-                loading && appStore.$patch({ reqLoading: false })
                 resolve(res)
             })
             .catch(err => {
                 showMsg && err.msg && message.error(err.msg)
-                loading && appStore.$patch({ reqLoading: false })
                 reject(err)
             })
             .finally(() => {
