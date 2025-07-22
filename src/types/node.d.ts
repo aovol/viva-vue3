@@ -3,7 +3,6 @@ export interface Node {
     parent_id?: number
     name: string
     path?: string
-    api?: string
     icon?: string
     component: string
     redirect?: string

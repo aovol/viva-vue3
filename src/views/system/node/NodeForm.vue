@@ -1,11 +1,10 @@
 <template>
     <t-drawer
         v-model:visible="visible"
-        :footer="false"
-        @closed="onClosed"
         :header="`${menuForm.id ? '编辑' : '添加'}节点`"
-        @close="onClosed"
         size="600px"
+        @close="onClosed"
+        @confirm="form?.submit()"
     >
         <t-form ref="form" :rules="rules" :data="menuForm" :colon="true" @submit="onSubmit">
             <t-form-item label="父级节点" name="parent_id">
@@ -71,17 +70,6 @@
                             <t-radio-button value="DELETE">DELETE</t-radio-button>
                         </t-radio-group>
                     </t-form-item>
-                    <t-form-item label="API" name="api">
-                        <template #help>
-                            当节点类型为权限时，请输入节点API，如：/api/v1/user/list
-                        </template>
-                        <t-input
-                            clearable
-                            v-model="menuForm.api"
-                            placeholder="请输入节点API"
-                            @enter="onEnter"
-                        ></t-input>
-                    </t-form-item>
                 </template>
                 <template v-if="menuForm.type === 'menu'">
                     <t-form-item label="路由" name="path">
@@ -98,7 +86,7 @@
                 <t-form-item label="批量添加" name="batch_permissions">
                     <template #help>
                         <p>请输入批量添加的权限，每行一个</p>
-                        <p>格式为：名称|标识|API|请求方法</p>
+                        <p>格式为：名称|标识|请求方法</p>
                     </template>
                     <t-textarea
                         :autosize="{ minRows: 5 }"
@@ -221,7 +209,6 @@
         parent_id: undefined,
         name: '',
         path: '',
-        api: '',
         icon: '',
         component: '',
         redirect: '',
@@ -240,7 +227,6 @@
         menuForm.parent_id = undefined
         menuForm.name = ''
         menuForm.path = ''
-        menuForm.api = ''
         menuForm.icon = ''
         menuForm.component = ''
         menuForm.redirect = ''
@@ -259,7 +245,6 @@
             menuForm.parent_id = node.parent_id
             menuForm.name = node.name
             menuForm.path = node.path
-            menuForm.api = node.api
             menuForm.icon = node.icon
             menuForm.component = node.component
             menuForm.redirect = node.redirect
@@ -288,12 +273,15 @@
             emit('success')
         })
     }
+    const confirm = async () => {
+        form.value?.submit()
+    }
 
     const onEnter: InputProps['onEnter'] = (_, { e }) => {
         e.preventDefault()
     }
     const onClosed = () => {
-        visible.value = false
+        // visible.value = false
         resetMenuForm()
     }
 
