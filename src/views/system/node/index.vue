@@ -82,7 +82,7 @@
             width: 200,
             cell: (_, { row }) => (
                 <div class="flex items-center gap-2 group">
-                    <span>{row.type === 'menu' ? row.path : row.api}</span>
+                    <span>{row.path}</span>
                     <span class="hidden group-hover:block">
                         <t-icon
                             name="copy"

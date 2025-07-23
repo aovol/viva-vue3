@@ -5,6 +5,13 @@
         size="600px"
         @close="onClosed"
         @confirm="form?.submit()"
+        :confirm-btn="{
+            theme: 'primary',
+            variant: 'base',
+            loading:
+                appStore.isLoading('/system/node/create') ||
+                appStore.isLoading('/system/node/update')
+        }"
     >
         <t-form ref="form" :rules="rules" :data="menuForm" :colon="true" @submit="onSubmit">
             <t-form-item label="父级节点" name="parent_id">
@@ -152,20 +159,6 @@
                     <template #label="slotProps">{{ slotProps.value ? '启用' : '禁用' }}</template>
                 </t-switch>
             </t-form-item>
-            <t-form-item>
-                <t-space size="small">
-                    <t-button
-                        theme="primary"
-                        type="submit"
-                        :loading="
-                            appStore.isLoading('/system/node/create') ||
-                            appStore.isLoading('/system/node/update')
-                        "
-                        >提交</t-button
-                    >
-                    <t-button theme="default" variant="base" @click="onClosed">取消</t-button>
-                </t-space>
-            </t-form-item>
         </t-form>
     </t-drawer>
 </template>
@@ -281,7 +274,7 @@
         e.preventDefault()
     }
     const onClosed = () => {
-        // visible.value = false
+        visible.value = false
         resetMenuForm()
     }
 
